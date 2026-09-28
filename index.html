@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد مدیریت حسابرسی بهداشتی دام</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>📊 داشبورد مدیریت حسابرسی بهداشتی دام</h1>
+                <p class="subtitle">سیستم جامع مدیریت و گزارش‌گیری</p>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="navbar">
+            <ul class="nav-tabs">
+                <li><a href="#" class="nav-tab active" data-tab="management">مدیریت داده‌ها</a></li>
+                <li><a href="#" class="nav-tab" data-tab="reports">گزارش‌گیری</a></li>
+                <li><a href="#" class="nav-tab" data-tab="upload">آپلود فایل</a></li>
+            </ul>
+        </nav>
+
+        <!-- Tab Content -->
+        <main class="main-content">
+            
+            <!-- Management Tab -->
+            <section id="management" class="tab-content active">
+                <div class="section-header">
+                    <h2>📋 مدیریت داده‌ها</h2>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="controls">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 جستجو در تمام داده‌ها...">
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="addRowBtn">➕ افزودن ردیف جدید</button>
+                        <button class="btn btn-info" id="printBtn">📄 چاپ PDF</button>
+                        <button class="btn btn-success" id="exportExcelBtn">📊 خروجی Excel</button>
+                        <button class="btn btn-warning" id="exportWordBtn">📝 خروجی Word</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-wrapper">
+                    <table id="dataTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ردیف</th>
+                                <th>کد بازرسی</th>
+                                <th>شماره گواهی</th>
+                                <th>تاریخ گواهی</th>
+                                <th>تاریخ ثبت</th>
+                                <th>نام واحد</th>
+                                <th>کد واحد</th>
+                                <th>نوع واحد</th>
+                                <th>استان</th>
+                                <th>شهرستان</th>
+                                <th>کد پنجره</th>
+                                <th>کد واحد مبدا</th>
+                                <th>نام واحد مبدا</th>
+                                <th>نوع واحد مبدا</th>
+                                <th>شهر</th>
+                                <th>استان مبدا</th>
+                                <th>نوع عملیات</th>
+                                <th>بیماری</th>
+                                <th>نوع دام</th>
+                                <th>نوع ضبط</th>
+                                <th>اندام</th>
+                                <th>تعداد</th>
+                                <th>وزن</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Tab -->
+            <section id="reports" class="tab-content">
+                <div class="section-header">
+                    <h2>📈 گزارش‌های تحلیلی</h2>
+                </div>
+
+                <div class="reports-container">
+                    <!-- Report Selection -->
+                    <div class="report-selector">
+                        <label for="reportType">انتخاب نوع گزارش:</label>
+                        <select id="reportType">
+                            <option value="monthly">📅 گزارش ماهانه</option>
+                            <option value="quarterly">📊 گزارش سه‌ماهه</option>
+                            <option value="semiannual">📉 گزارش شش‌ماهه</option>
+                            <option value="triannual">📋 گزارش نه‌ماهه</option>
+                            <option value="annual">📅 گزارش سالانه (۱۲ماهه)</option>
+                        </select>
+                        <button class="btn btn-primary" id="generateReportBtn">تولید گزارش</button>
+                    </div>
+
+                    <!-- Report Stats -->
+                    <div class="report-stats" id="reportStats">
+                        <div class="stat-box">
+                            <h3>📊 تعداد کل رکوردها</h3>
+                            <p class="stat-value" id="totalRecords">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>🏭 تعداد واحدها</h3>
+                            <p class="stat-value" id="totalUnits">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>🐑 کل تعداد دام</h3>
+                            <p class="stat-value" id="totalAnimals">0</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>⚖️ کل وزن (کیلوگرم)</h3>
+                            <p class="stat-value" id="totalWeight">0</p>
+                        </div>
+                    </div>
+
+                    <!-- Report Table -->
+                    <div class="report-table-wrapper">
+                        <table id="reportTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>دوره</th>
+                                    <th>تعداد رکوردها</th>
+                                    <th>تعداد واحدها</th>
+                                    <th>کل دام</th>
+                                    <th>کل وزن</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Report Export -->
+                    <div class="report-actions">
+                        <button class="btn btn-info" id="printReportBtn">📄 چاپ گزارش PDF</button>
+                        <button class="btn btn-success" id="exportReportExcelBtn">📊 خروجی Excel</button>
+                        <button class="btn btn-warning" id="exportReportWordBtn">📝 خروجی Word</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Tab -->
+            <section id="upload" class="tab-content">
+                <div class="section-header">
+                    <h2>📁 آپلود فایل اکسل</h2>
+                </div>
+
+                <div class="upload-container">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📤</div>
+                        <h3>فایل اکسل خود را اینجا رها کنید</h3>
+                        <p>یا</p>
+                        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display: none;">
+                        <button class="btn btn-primary" id="browseBtn">انتخاب فایل</button>
+                        <p class="upload-hint">فرمت‌های پشتیبانی شده: Excel (.xlsx, .xls), CSV</p>
+                    </div>
+
+                    <div class="upload-status" id="uploadStatus" style="display: none;">
+                        <div class="status-message"></div>
+                    </div>
+
+                    <div class="upload-preview" id="uploadPreview" style="display: none;">
+                        <h3>پیش‌نمایش داده‌های آپلود شده:</h3>
+                        <div class="preview-table">
+                            <table id="previewTable" class="data-table"></table>
+                        </div>
+                        <button class="btn btn-success" id="confirmUploadBtn">✅ تأیید و ذخیره</button>
+                        <button class="btn btn-danger" id="cancelUploadBtn">❌ لغو</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for Edit/Add -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">افزودن ردیف جدید</h2>
+            <form id="editForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>ردیف:</label>
+                        <input type="number" name="ردیف" required>
+                    </div>
+                    <div class="form-group">
+                        <label>کد بازرسی:</label>
+                        <input type="text" name="SanitaryInspectionVCode" required>
+                    </div>
+                    <div class="form-group">
+                        <label>شماره گواهی:</label>
+                        <input type="text" name="شماره گواهی" required>
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ گواهی:</label>
+                        <input type="text" name="تاریخ گواهی" placeholder="مثال: 1405/06/31">
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ ثبت:</label>
+                        <input type="text" name="تاریخ ثبت" placeholder="مثال: 1405/07/04">
+                    </div>
+                    <div class="form-group">
+                        <label>نام واحد:</label>
+                        <input type="text" name="نام واحد اپیدمیولوژیک">
+                    </div>
+                    <div class="form-group">
+                        <label>کد واحد:</label>
+                        <input type="text" name="کد واحد اپیدمیولوژیک">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع واحد:</label>
+                        <input type="text" name="نوع واحد اپیدمیولوژیک">
+                    </div>
+                    <div class="form-group">
+                        <label>استان:</label>
+                        <input type="text" name="استان">
+                    </div>
+                    <div class="form-group">
+                        <label>شهرستان:</label>
+                        <input type="text" name="شهرستان">
+                    </div>
+                    <div class="form-group">
+                        <label>کد پنجره:</label>
+                        <input type="text" name="کد پنجره">
+                    </div>
+                    <div class="form-group">
+                        <label>کد واحد مبدا:</label>
+                        <input type="text" name="کد واحد مبدا">
+                    </div>
+                    <div class="form-group">
+                        <label>نام واحد مبدا:</label>
+                        <input type="text" name="نام واحد مبدا">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع واحد مبدا:</label>
+                        <input type="text" name="نوع واحد مبدا">
+                    </div>
+                    <div class="form-group">
+                        <label>شهر:</label>
+                        <input type="text" name="شهر واحد مبدا">
+                    </div>
+                    <div class="form-group">
+                        <label>استان مبدا:</label>
+                        <input type="text" name="استان واحد مبدا">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع عملیات:</label>
+                        <input type="text" name="نوع عملیات">
+                    </div>
+                    <div class="form-group">
+                        <label>بیماری:</label>
+                        <input type="text" name="نام بیماری">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع دام:</label>
+                        <input type="text" name="نوع دام">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع ضبط:</label>
+                        <input type="text" name="نوع ضبط">
+                    </div>
+                    <div class="form-group">
+                        <label>اندام:</label>
+                        <input type="text" name="اندام">
+                    </div>
+                    <div class="form-group">
+                        <label>تعداد:</label>
+                        <input type="number" name="تعداد">
+                    </div>
+                    <div class="form-group">
+                        <label>وزن:</label>
+                        <input type="number" name="وزن" step="0.01">
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-success">💾 ذخیره</button>
+                    <button type="button" class="btn btn-danger" id="closeModalBtn">❌ انصراف</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
